@@ -1,0 +1,30 @@
+{
+  "name": "node-oracle-test",
+  "version": "0.0.1",
+  "description": "node-oracle test",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vschoettke/node-oracle-test.git"
+  },
+  "keywords": [
+    "node",
+    "oracle",
+    "test"
+  ],
+  "author": "Vincent Schoettke <vincentschoettke@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vschoettke/node-oracle-test/issues"
+  },
+  "homepage": "https://github.com/vschoettke/node-oracle-test",
+  "devDependencies": {
+    "mocha": "^1.21.4"
+  },
+  "dependencies": {
+    "oracle": "^0.3.7"
+  }
+}

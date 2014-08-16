@@ -1,0 +1,16 @@
+# .travis.yml
+language: node_js
+
+node_js:
+  - '0.10'
+
+before_script:
+  - source prepare.sh
+
+notifications:
+  email: false
+
+matrix:
+  allow_failures:
+    - node_js: '0.11'
+  fast_finish: true
