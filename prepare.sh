@@ -14,4 +14,11 @@ done
 export OCI_HOME=`pwd`
 export OCI_LIB_DIR=$OCI_HOME
 export OCI_INCLUDE_DIR=$OCI_HOME/sdk/include
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OCI_LIB_DIR"
+
+echo "PATHS:"
+echo $OCI_HOME
+echo $OCI_LIB_DIR
+echo $OCI_INCLUDE_DIR
+
 popd
