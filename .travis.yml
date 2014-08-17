@@ -8,7 +8,7 @@ jdk:
   - oraclejdk7
 
 before_install:
-  - java -versin
+  - java -version
   - file `which java javac`
   - source ./prepare.sh
 
