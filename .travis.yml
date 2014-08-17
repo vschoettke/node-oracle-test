@@ -4,8 +4,12 @@ language: node_js
 node_js:
   - '0.10'
 
+jdk:
+  - oraclejdk7
+
 before_install:
-  - echo "before_install"
+  - java -versin
+  - file `which java javac`
   - source ./prepare.sh
 
 notifications:
