@@ -10,6 +10,9 @@ jdk:
 before_install:
   - java -version
   - file `which java javac`
+  - sudo free
+  - sudo df
+  - sudo df -h
   - source ./prepare.sh
 
 notifications:
