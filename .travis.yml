@@ -9,7 +9,7 @@ before_install:
 - sudo free
 - sudo df
 - sudo df -h
-- ./prepareenv.sh
+- sudo ./prepareenv.sh
 - source ./prepare.sh
 notifications:
   email: false
