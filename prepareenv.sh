@@ -1,13 +1,16 @@
 #!/bin/bash
 set -e
 
-#sudo add-apt-repository ppa:webupd8team/java -y
-#sudo apt-get update
+sudo add-apt-repository ppa:webupd8team/java -y
+sudo apt-get update
 # requires "ENTER + LEFT + ENTER"
 #sudo apt-get install oracle-java7-installer -y
-#java -version
+java -version
 #echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" | sudo tee -a /etc/bash.bashrc
 #echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /etc/bash.bashrc
+
+echo "JAVA_HOME: $JAVA_HOME"
+echo "PATH: $PATH"
 
 if [ -z "$1" ]; then
     echo "secret missing"
@@ -27,14 +30,14 @@ openssl dgst -sha1 test.deb
 
 echo "Installing libaio and unixodbc"
 
-apt-get update
 apt-get install -qq libaio1 unixodbc
 cp chkconfig /sbin/
 chmod 755 /sbin/chkconfig
 
+ls -al /etc/init.d/
 # cp 60-oracle.conf /etc/sysctl.d/
 # service procps start
-# sysctl -q fs.file-max
+sysctl -q fs.file-max
 
 echo "Preparing expected files"
 
@@ -55,6 +58,8 @@ mount -t tmpfs shmfs -o size=1024m /dev/shm
 echo "Configuring"
 
 printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
+
+cat /u01/app/oracle/product/11.2.0/xe/config/log
 
 echo "Preparing bash enviroment"
 
