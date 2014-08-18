@@ -6,8 +6,6 @@ jdk:
 before_install:
 - sudo ./oracle_db_setup.sh $PASSWD
 - source ./oracle_db_env.sh
-- echo $ORACLE_HOME
-- echo $PATH
 - ./oracle_create_user.sh
 - source ./prepare.sh
 notifications:

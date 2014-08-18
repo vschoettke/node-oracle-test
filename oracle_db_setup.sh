@@ -1,16 +1,5 @@
 #!/bin/bash
-# set -e
-
-# sudo add-apt-repository ppa:webupd8team/java -y
-sudo apt-get -q update
-# requires "ENTER + LEFT + ENTER"
-#sudo apt-get install oracle-java7-installer -y
-java -version
-#echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" | sudo tee -a /etc/bash.bashrc
-#echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /etc/bash.bashrc
-
-echo "JAVA_HOME: $JAVA_HOME"
-echo "PATH: $PATH"
+set -e
 
 if [ -z "$1" ]; then
     echo "secret missing"
@@ -28,47 +17,37 @@ curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_f >>test.
 openssl enc -aes-256-cbc -d -in test.deb.enc -out test.deb -k `echo $SECRET`
 openssl dgst -sha1 test.deb
 
-echo "Installing libaio and unixodbc"
-
+apt-get -qq update
 apt-get install -qq libaio1 unixodbc bc
-cp chkconfig /sbin/
+
+tee /sbin/chkconfig <<EOF > /dev/null
+#!/bin/bash
+# Oracle 11gR2 XE installer chkconfig hack for Ubuntu
+file=/etc/init.d/oracle-xe
+if [[ ! \`tail -n1 \$file | grep INIT\` ]]; then
+echo >> \$file
+echo '### BEGIN INIT INFO' >> \$file
+echo '# Provides: OracleXE' >> \$file
+echo '# Required-Start: \$remote_fs \$syslog' >> \$file
+echo '# Required-Stop: \$remote_fs \$syslog' >> \$file
+echo '# Default-Start: 2 3 4 5' >> \$file
+echo '# Default-Stop: 0 1 6' >> \$file
+echo '# Short-Description: Oracle 11g Express Edition' >> \$file
+echo '### END INIT INFO' >> \$file
+fi
+update-rc.d oracle-xe defaults 80 01
+EOF
+
 chmod 755 /sbin/chkconfig
-
-ls -al /etc/init.d/
-# cp 60-oracle.conf /etc/sysctl.d/
-# service procps start
-sysctl -q fs.file-max
-
-echo "Preparing expected files"
 
 ln -s /usr/bin/awk /bin/awk
 mkdir /var/lock/subsys
 touch /var/lock/subsys/listener
 
-echo "Installing"
-
 dpkg --install test.deb
-
-echo "Cleanup after install"
 
 rm -rf /dev/shm
 mkdir /dev/shm
 mount -t tmpfs shmfs -o size=1024m /dev/shm
 
 printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
-
-# echo "Dumping install logs"
-
-# pushd .
-# cd /u01/app/oracle/product/11.2.0/xe/config/log
-# find . -type f -exec cat {} +
-# popd
-
-echo "Preparing bash enviroment"
-
-echo "export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe" | tee -a /etc/bash.bashrc
-echo "export ORACLE_SID=XE" | tee -a /etc/bash.bashrc
-echo "export NLS_LANG=\`\$ORACLE_HOME/bin/nls_lang.sh\`" | tee -a /etc/bash.bashrc
-echo "export ORACLE_BASE=/u01/app/oracle" | tee -a /etc/bash.bashrc
-echo "export LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH" | tee -a /etc/bash.bashrc
-echo "export PATH=\$ORACLE_HOME/bin:\$PATH" | tee -a /etc/bash.bashrc
