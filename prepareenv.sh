@@ -25,25 +25,38 @@ curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_f >>test.
 openssl enc -aes-256-cbc -d -in test.deb.enc -out test.deb -k `echo $SECRET`
 openssl dgst -sha1 test.deb
 
+echo "Installing libaio and unixodbc"
+
+apt-get update
 apt-get install -qq libaio1 unixodbc
 cp chkconfig /sbin/
 chmod 755 /sbin/chkconfig
 
-cp 60-oracle.conf /etc/sysctl.d/
-service procps start
-sysctl -q fs.file-max
+# cp 60-oracle.conf /etc/sysctl.d/
+# service procps start
+# sysctl -q fs.file-max
+
+echo "Preparing expected files"
 
 ln -s /usr/bin/awk /bin/awk
 mkdir /var/lock/subsys
 touch /var/lock/subsys/listener
 
+echo "Installing"
+
 dpkg --install test.deb
+
+echo "Cleanup after install"
 
 rm -rf /dev/shm
 mkdir /dev/shm
 mount -t tmpfs shmfs -o size=1024m /dev/shm
 
+echo "Configuring"
+
 printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
+
+echo "Preparing bash enviroment"
 
 echo "export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe" | tee -a /etc/bash.bashrc
 echo "export ORACLE_SID=XE" | tee -a /etc/bash.bashrc
@@ -54,5 +67,9 @@ echo "export PATH=\$ORACLE_HOME/bin:\$PATH" | tee -a /etc/bash.bashrc
 
 source /etc/bash.bashrc
 
+echo "Creating user"
+
 echo "CREATE USER testuser IDENTIFIED BY travis;" | sqlplus -S -L SYSTEM/oracle
 echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | sqlplus -S -L SYSTEM/oracle
+
+echo "Finished"
