@@ -59,7 +59,12 @@ echo "Configuring"
 
 printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
 
-cat /u01/app/oracle/product/11.2.0/xe/config/log
+echo "Dumping install logs"
+
+pushd .
+cd /u01/app/oracle/product/11.2.0/xe/config/log
+find . -type f -exec cat {} +
+popd
 
 echo "Preparing bash enviroment"
 
@@ -72,9 +77,11 @@ echo "export PATH=\$ORACLE_HOME/bin:\$PATH" | tee -a /etc/bash.bashrc
 
 source /etc/bash.bashrc
 
+env
+
 echo "Creating user"
 
-echo "CREATE USER testuser IDENTIFIED BY travis;" | sqlplus -S -L SYSTEM/oracle
-echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | sqlplus -S -L SYSTEM/oracle
+echo "CREATE USER testuser IDENTIFIED BY travis;" | $ORACLE_HOME/bin/sqlplus -S -L SYSTEM/oracle
+echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | $ORACLE_HOME/bin/sqlplus -S -L SYSTEM/oracle
 
 echo "Finished"
