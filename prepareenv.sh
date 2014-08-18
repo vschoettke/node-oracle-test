@@ -9,13 +9,20 @@ set -e
 #echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" | sudo tee -a /etc/bash.bashrc
 #echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /etc/bash.bashrc
 
+if [ -z "$1" ]; then
+    echo "secret missing"
+    exit 1;
+fi
+
+SECRET=$1
+
 curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_a >test.deb.enc
 curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_b >>test.deb.enc
 curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_c >>test.deb.enc
 curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_d >>test.deb.enc
 curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_e >>test.deb.enc
 curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_f >>test.deb.enc
-openssl enc -aes-256-cbc -d -in test.deb.enc -out test.deb -k `echo $PASSWD`
+openssl enc -aes-256-cbc -d -in test.deb.enc -out test.deb -k `echo $SECRET`
 openssl dgst -sha1 test.deb
 
 apt-get install -qq libaio1 unixodbc
