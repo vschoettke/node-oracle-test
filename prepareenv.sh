@@ -55,16 +55,14 @@ rm -rf /dev/shm
 mkdir /dev/shm
 mount -t tmpfs shmfs -o size=1024m /dev/shm
 
-echo "Configuring"
-
 printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
 
-echo "Dumping install logs"
+# echo "Dumping install logs"
 
-pushd .
-cd /u01/app/oracle/product/11.2.0/xe/config/log
-find . -type f -exec cat {} +
-popd
+# pushd .
+# cd /u01/app/oracle/product/11.2.0/xe/config/log
+# find . -type f -exec cat {} +
+# popd
 
 echo "Preparing bash enviroment"
 
@@ -75,18 +73,22 @@ echo "export ORACLE_BASE=/u01/app/oracle" | tee -a /etc/bash.bashrc
 echo "export LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH" | tee -a /etc/bash.bashrc
 echo "export PATH=\$ORACLE_HOME/bin:\$PATH" | tee -a /etc/bash.bashrc
 
-export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
-export ORACLE_SID=XE
-export NLS_LANG=\`\$ORACLE_HOME/bin/nls_lang.sh\`
-export ORACLE_BASE=/u01/app/oracle
-export LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH
-export PATH=\$ORACLE_HOME/bin:\$PATH
+ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
+ORACLE_SID=XE
+NLS_LANG=\`\$ORACLE_HOME/bin/nls_lang.sh\`
+ORACLE_BASE=/u01/app/oracle
+LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH
+PATH=\$ORACLE_HOME/bin:\$PATH
 
-echo "===[ Enviroment ]==============================================================="
+echo "===[ Enviroment ]==="
 
-env
+echo "ORACLE_HOME: $ORACLE_HOME"
+echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+echo "PATH: $PATH"
 
-echo "===[ Creating User ]============================================================"
+which sqlplus
+
+echo "===[ Creating User ]==="
 
 echo "CREATE USER testuser IDENTIFIED BY travis;" | sqlplus -S -L SYSTEM/oracle
 echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | sqlplus -S -L SYSTEM/oracle
