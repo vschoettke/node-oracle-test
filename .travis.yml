@@ -11,6 +11,7 @@ before_install:
 - sudo df -h
 - sudo ./prepareenv.sh $PASSWD
 - source /etc/bash.bashrc
+- echo $ORACLE_HOME
 - echo $PATH
 - source ./prepare.sh
 notifications:

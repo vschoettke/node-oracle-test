@@ -73,12 +73,18 @@ echo "export ORACLE_BASE=/u01/app/oracle" | tee -a /etc/bash.bashrc
 echo "export LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH" | tee -a /etc/bash.bashrc
 echo "export PATH=\$ORACLE_HOME/bin:\$PATH" | tee -a /etc/bash.bashrc
 
+echo "====="
+
+cat /etc/bash.bashrc
+
+echo "-----"
+
 ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
 ORACLE_SID=XE
-NLS_LANG=\`\$ORACLE_HOME/bin/nls_lang.sh\`
+NLS_LANG=`$ORACLE_HOME/bin/nls_lang.sh`
 ORACLE_BASE=/u01/app/oracle
-LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH
-PATH=\$ORACLE_HOME/bin:\$PATH
+LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+PATH=$ORACLE_HOME/bin:$PATH
 
 echo "===[ Enviroment ]==="
 
