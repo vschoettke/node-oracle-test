@@ -1,24 +1,22 @@
-# .travis.yml
 language: node_js
-
 node_js:
-  - '0.10'
-
+- '0.10'
 jdk:
-  - oraclejdk7
-
+- oraclejdk7
 before_install:
-  - java -version
-  - file `which java javac`
-  - sudo free
-  - sudo df
-  - sudo df -h
-  - source ./prepare.sh
-
+- java -version
+- file `which java javac`
+- sudo free
+- sudo df
+- sudo df -h
+- ./prepareenv.sh
+- source ./prepare.sh
 notifications:
   email: false
-
 matrix:
   allow_failures:
-    - node_js: '0.11'
+  - node_js: '0.11'
   fast_finish: true
+env:
+  global:
+    secure: W7GcRfH6awCfvcVsQ49EVOUPHfXyaRN2BMQMZWue0lvEIT3frGDv3r8Y2C4MwtOO2VUv+OzcgALX6HVqz7BZUSKBosgVA3JmzrO587Ze0smru6Vgbnj7t8R/irVP4vHXXZR/DPz0Veg6lK3HhmRSyrl99uC7FrbFBTte9pDBaRY=
