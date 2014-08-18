@@ -75,13 +75,20 @@ echo "export ORACLE_BASE=/u01/app/oracle" | tee -a /etc/bash.bashrc
 echo "export LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH" | tee -a /etc/bash.bashrc
 echo "export PATH=\$ORACLE_HOME/bin:\$PATH" | tee -a /etc/bash.bashrc
 
-source /etc/bash.bashrc
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
+export ORACLE_SID=XE
+export NLS_LANG=\`\$ORACLE_HOME/bin/nls_lang.sh\`
+export ORACLE_BASE=/u01/app/oracle
+export LD_LIBRARY_PATH=\$ORACLE_HOME/lib:\$LD_LIBRARY_PATH
+export PATH=\$ORACLE_HOME/bin:\$PATH
+
+echo "===[ Enviroment ]==============================================================="
 
 env
 
-echo "Creating user"
+echo "===[ Creating User ]============================================================"
 
-echo "CREATE USER testuser IDENTIFIED BY travis;" | $ORACLE_HOME/bin/sqlplus -S -L SYSTEM/oracle
-echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | $ORACLE_HOME/bin/sqlplus -S -L SYSTEM/oracle
+echo "CREATE USER testuser IDENTIFIED BY travis;" | sqlplus -S -L SYSTEM/oracle
+echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | sqlplus -S -L SYSTEM/oracle
 
 echo "Finished"
