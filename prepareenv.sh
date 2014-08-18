@@ -1,8 +1,8 @@
 #!/bin/bash
-set -e
+# set -e
 
-sudo add-apt-repository ppa:webupd8team/java -y
-sudo apt-get update
+# sudo add-apt-repository ppa:webupd8team/java -y
+sudo apt-get -q update
 # requires "ENTER + LEFT + ENTER"
 #sudo apt-get install oracle-java7-installer -y
 java -version
@@ -30,7 +30,7 @@ openssl dgst -sha1 test.deb
 
 echo "Installing libaio and unixodbc"
 
-apt-get install -qq libaio1 unixodbc
+apt-get install -qq libaio1 unixodbc bc
 cp chkconfig /sbin/
 chmod 755 /sbin/chkconfig
 
