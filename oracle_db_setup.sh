@@ -49,7 +49,7 @@ sudo rm -rf /dev/shm
 sudo mkdir /dev/shm
 sudo mount -t tmpfs shmfs -o size=1024m /dev/shm
 
-sudo printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
+printf 8080\\n1521\\noracle\\noracle\\ny\\n | sudo /etc/init.d/oracle-xe configure
 
 export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
 export ORACLE_SID=XE
