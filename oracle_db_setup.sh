@@ -1,26 +1,25 @@
 #!/bin/bash
-set -e
 
 if [ -z "$1" ]; then
     echo "secret missing"
     exit 1;
-fi
+else
 
 SECRET=$1
 
-curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_a >test.deb.enc
-curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_b >>test.deb.enc
-curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_c >>test.deb.enc
-curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_d >>test.deb.enc
-curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_e >>test.deb.enc
-curl https://raw.githubusercontent.com/vschoettke/ci-test/master/chunk_f >>test.deb.enc
-openssl enc -aes-256-cbc -d -in test.deb.enc -out test.deb -k `echo $SECRET`
-openssl dgst -sha1 test.deb
+curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_a >xe.deb.enc
+curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_b >>xe.deb.enc
+curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_c >>xe.deb.enc
+curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_d >>xe.deb.enc
+curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_e >>xe.deb.enc
+curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_f >>xe.deb.enc
+openssl enc -aes-256-cbc -d -in xe.deb.enc -out xe.deb -k `echo $SECRET`
+openssl dgst -sha1 xe.deb
 
-apt-get -qq update
-apt-get install -qq libaio1 unixodbc bc
+sudo apt-get -qq update
+sudo apt-get install -qq libaio1 unixodbc bc
 
-tee /sbin/chkconfig <<EOF > /dev/null
+sudo tee /sbin/chkconfig <<EOF > /dev/null
 #!/bin/bash
 # Oracle 11gR2 XE installer chkconfig hack for Ubuntu
 file=/etc/init.d/oracle-xe
@@ -38,16 +37,33 @@ fi
 update-rc.d oracle-xe defaults 80 01
 EOF
 
-chmod 755 /sbin/chkconfig
+sudo chmod 755 /sbin/chkconfig
 
-ln -s /usr/bin/awk /bin/awk
-mkdir /var/lock/subsys
-touch /var/lock/subsys/listener
+sudo ln -s /usr/bin/awk /bin/awk
+sudo mkdir /var/lock/subsys
+sudo touch /var/lock/subsys/listener
 
-dpkg --install test.deb
+sudo dpkg --install test.deb
 
-rm -rf /dev/shm
-mkdir /dev/shm
-mount -t tmpfs shmfs -o size=1024m /dev/shm
+sudo rm -rf /dev/shm
+sudo mkdir /dev/shm
+sudo mount -t tmpfs shmfs -o size=1024m /dev/shm
 
-printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
+sudo printf 8080\\n1521\\noracle\\noracle\\ny\\n | /etc/init.d/oracle-xe configure
+
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
+export ORACLE_SID=XE
+export NLS_LANG=`$ORACLE_HOME/bin/nls_lang.sh`
+export ORACLE_BASE=/u01/app/oracle
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+export PATH=$ORACLE_HOME/bin:$PATH
+
+echo "CREATE USER testuser IDENTIFIED BY test;" | sqlplus -S -L SYSTEM/oracle
+echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | sqlplus -S -L SYSTEM/oracle
+
+export CI_ORACLE_USER=testuser
+export CI_ORACLE_PW=test
+export CI_ORACLE_DB=XE
+export CI_ORACLE_HOST=127.0.0.1
+export CI_ORACLE_PORT=1521
+fi

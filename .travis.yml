@@ -4,9 +4,8 @@ node_js:
 jdk:
 - oraclejdk7
 before_install:
-- sudo ./oracle_db_setup.sh $PASSWD
-- source ./oracle_db_env.sh
-- ./oracle_create_user.sh
+- source ./oracle_db_setup.sh $PASSWD
+- echo $CI_ORACLE_USER
 - source ./prepare.sh
 notifications:
   email: false
