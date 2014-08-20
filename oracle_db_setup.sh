@@ -7,6 +7,18 @@ else
 
 SECRET=$1
 
+if [ -z "$2" ]; then
+    ORACLE_USER=testuser
+else
+    ORACLE_USER=$2
+fi
+
+if [ -z "$3" ]; then
+    ORACLE_PW=test
+else
+    ORACLE_PW=$3
+fi
+
 curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_a >xe.deb.enc
 curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_b >>xe.deb.enc
 curl https://raw.githubusercontent.com/vschoettke/ci-xe-deb-enc/master/xe.deb.enc_c >>xe.deb.enc
@@ -58,12 +70,14 @@ export ORACLE_BASE=/u01/app/oracle
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 export PATH=$ORACLE_HOME/bin:$PATH
 
-echo "CREATE USER testuser IDENTIFIED BY test;" | sqlplus -S -L SYSTEM/oracle
-echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to testuser;" | sqlplus -S -L SYSTEM/oracle
+echo "Creating user: $ORACLE_USER with password: $ORACLE_PW"
 
-export CI_ORACLE_USER=testuser
-export CI_ORACLE_PW=test
+echo "CREATE USER $ORACLE_USER IDENTIFIED BY $ORACLE_PW;" | sqlplus -S -L SYSTEM/oracle
+echo "grant CREATE SESSION, ALTER SESSION, CREATE DATABASE LINK, CREATE MATERIALIZED VIEW, CREATE PROCEDURE, CREATE PUBLIC SYNONYM, CREATE ROLE, CREATE SEQUENCE, CREATE SYNONYM, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE VIEW, UNLIMITED TABLESPACE to $ORACLE_USER;" | sqlplus -S -L SYSTEM/oracle
+
+export CI_ORACLE_USER=$ORACLE_USER
+export CI_ORACLE_PW=$ORACLE_PW
 export CI_ORACLE_DB=XE
-export CI_ORACLE_HOST=127.0.0.1
+export CI_ORACLE_HOSTNAME=localhost
 export CI_ORACLE_PORT=1521
 fi

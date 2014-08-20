@@ -21,11 +21,4 @@ export OCI_VERSION=12 # Integer. Optional, defaults to '11'
 export NLS_LANG=.UTF8 # Optional, but required to support international characters
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OCI_LIB_DIR"
 
-echo "PATHS:"
-echo $OCI_HOME
-echo $OCI_LIB_DIR
-echo $OCI_INCLUDE_DIR
-echo $NLS_LANG
-echo $LD_LIBRARY_PATH
-
 popd

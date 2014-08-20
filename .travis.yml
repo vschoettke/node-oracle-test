@@ -4,9 +4,8 @@ node_js:
 jdk:
 - oraclejdk7
 before_install:
-- source ./oracle_db_setup.sh $PASSWD
-- echo $CI_ORACLE_USER
-- source ./prepare.sh
+- source ./oracle_db_setup.sh $PASSWD "test" "test"
+- source ./node_oracle_env.sh
 notifications:
   email: false
 matrix:
