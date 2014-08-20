@@ -43,7 +43,7 @@ sudo ln -s /usr/bin/awk /bin/awk
 sudo mkdir /var/lock/subsys
 sudo touch /var/lock/subsys/listener
 
-sudo dpkg --install test.deb
+sudo dpkg --install xe.deb
 
 sudo rm -rf /dev/shm
 sudo mkdir /dev/shm
